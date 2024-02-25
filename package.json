@@ -1,0 +1,12 @@
+{
+  "name": "yald",
+  "version": "0.1.0",
+  "description": "parser prototype for a custom scripting language",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
