@@ -4,7 +4,15 @@
   "description": "parser prototype for a custom scripting language",
   "type": "module",
   "main": "index.js",
-  "scripts": {},
+  "module": "index.js",
+  "bin": {
+    "yald": "./dist/yald.js"
+  },
+  "scripts": {
+    "build": "rollup -c rollup.config.ts --configPlugin typescript",
+    "watch": "rollup -w -c rollup.config.ts --configPlugin typescript",
+    "lint": "eslint src --ext .ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
