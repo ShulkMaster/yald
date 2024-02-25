@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { ExitCodes } from 'util/codes';
 import { promises } from 'readline';
+import { file } from 'util/files';
 
 const args = process.argv.slice(2);
 let shouldExit = false;
@@ -13,12 +14,15 @@ async function main(args: string[]): Promise<ExitCodes> {
     case 0:
       return await prompt();
     case 1:
-      console.log(`Hello, ${args[0]}!`);
-      return ExitCodes.ExOk;
+      return await runFile(args[0]);
     default:
-      console.error('Too many arguments');
-      return ExitCodes.ExUsage;
+      return printUsage();
   }
+}
+
+function printUsage(): ExitCodes {
+  console.log('Usage: yald [file]');
+  return ExitCodes.ExUsage;
 }
 
 function sigIntHandler() {
@@ -52,4 +56,14 @@ async function prompt(): Promise<ExitCodes> {
 
   stdin.close();
   return ExitCodes.ExOk;
+}
+
+async function runFile(path: string): Promise<ExitCodes> {
+    const result = await file.readFile(path);
+    if (result instanceof Error) {
+      console.error(result.message);
+      return ExitCodes.ExOsFile;
+    }
+    console.log(result);
+    return ExitCodes.ExOk;
 }
