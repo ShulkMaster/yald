@@ -1,4 +1,6 @@
 import { StringView } from './StringView';
+import { KeywordDFA } from './keywordDFA';
+import { keywords } from 'grammar/keywords';
 
 const whitespace: string[] = [' ', '\n', '\t', '\r'];
 const encoding = 'utf8';
@@ -17,6 +19,9 @@ export class Lexer {
 
   public next(): string {
     let char = this.view.next();
+    if (!char) {
+      return '';
+    }
 
     // skipping whitespace
     while (whitespace.includes(char)) {

@@ -2,6 +2,7 @@
 import { ExitCodes } from 'util/codes';
 import { promises } from 'readline';
 import { file } from 'util/files';
+import { Lexer } from 'lexer';
 
 const args = process.argv.slice(2);
 let shouldExit = false;
@@ -59,11 +60,19 @@ async function prompt(): Promise<ExitCodes> {
 }
 
 async function runFile(path: string): Promise<ExitCodes> {
-    const result = await file.readFile(path);
-    if (result instanceof Error) {
-      console.error(result.message);
-      return ExitCodes.ExOsFile;
-    }
-    console.log(result);
-    return ExitCodes.ExOk;
+  console.log(`Running file: ${path}`);
+  const result = await file.readFile(path);
+  if (result instanceof Error) {
+    console.error(result.message);
+    return ExitCodes.ExOsFile;
+  }
+
+  const lexer = new Lexer(result);
+  let token = lexer.next();
+  while (token) {
+    console.log(token);
+    token = lexer.next();
+  }
+
+  return ExitCodes.ExOk;
 }
