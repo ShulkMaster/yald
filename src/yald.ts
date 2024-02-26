@@ -69,7 +69,7 @@ async function runFile(path: string): Promise<ExitCodes> {
 
   const lexer = new Lexer(result);
   let token = lexer.next();
-  while (token) {
+  while (typeof token === 'string' || token.kind !== 'eof') {
     console.log(token);
     token = lexer.next();
   }
