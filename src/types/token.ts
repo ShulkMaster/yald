@@ -12,7 +12,7 @@ export enum TokenKind {
 
 type BaseToken = {
   line: number;
-  column: number;
+  bol: number;
   index: number;
   length: number;
 };

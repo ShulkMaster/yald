@@ -1,5 +1,7 @@
 export class StringView {
-  private index: number = 0;
+  private index: number = -1;
+  private bol: number = 0;
+  private row: number = 0;
 
   constructor(private readonly src: string) {}
 
@@ -8,8 +10,28 @@ export class StringView {
   }
 
   public next(): string {
-    const char =  this.src[this.index];
     this.index++;
+    const char =  this.src[this.index];
+    if (char === '\n') {
+      this.row++;
+      this.bol = this.index;
+    }
     return char;
+  }
+
+  get position(): number {
+    return this.index;
+  }
+
+  get line(): number {
+    return this.row;
+  }
+
+  get lineStart(): number {
+    return this.bol;
+  }
+
+  public text(start: number, end: number): string {
+    return this.src.slice(start, end);
   }
 }

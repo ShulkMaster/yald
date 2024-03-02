@@ -10,8 +10,6 @@ const encoding = 'utf8';
 
 export class Lexer {
   private readonly view: StringView;
-  private readonly buff = Buffer.alloc(1024, 0, encoding);
-
   private readonly punctuation = new Set(Object.values(Punctuation));
   private readonly keywordDfa = KeywordDFA.buildDFA(Object.values(Keyword));
 
@@ -21,18 +19,18 @@ export class Lexer {
     this.view = new StringView(src.toString(encoding));
   }
 
-  public get status(): MainState {
-    return this.state;
+  public getTokenText(tok: Token): string {
+    return this.view.text(tok.index, tok.index + tok.length);
   }
 
   private makeEOF(): Token {
     this.state = MainState.HALT;
     return {
       kind: TokenKind.EOF,
-      column: 0,
-      index: 0,
+      bol: this.view.lineStart,
+      index: this.view.position,
       length: 0,
-      line: 0,
+      line: this.view.line,
     };
   }
 
@@ -44,10 +42,10 @@ export class Lexer {
 
     return {
       kind: TokenKind.PUNCTUATION,
-      column: 0,
-      index: 0,
-      length: 0,
-      line: 0,
+      bol: this.view.lineStart,
+      index: this.view.position,
+      length: 1,
+      line: this.view.line,
       value: char as Punctuation,
     };
   }
@@ -68,13 +66,11 @@ export class Lexer {
       return punctuation;
     }
 
-    let displacement = 0;
+    const beginning = this.view.position;
     while (!whitespace.includes(char)) {
-      this.buff.write(char, displacement);
-      displacement+= Buffer.byteLength(char, encoding);
       char = this.view.next();
     }
 
-    return this.buff.toString(encoding, 0, displacement);
+    return this.view.text(beginning, this.view.position);
   }
 }
